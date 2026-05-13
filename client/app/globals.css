@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* Global reset */
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body styling same as HTML */
+body {
+  @apply bg-[#FAFAFA] text-slate-800 antialiased;
+  overflow-x: hidden;
+}
+
+/* Text selection styling from HTML */
+::selection {
+  background: rgba(99, 209, 211, 0.3);
+  color: #4B1F4E;
+}
+button, nav, p, a, input{
+  font-family: 'Inter', sans-serif;
+}
+
+.font-inter{
+  font-family: 'Inter', sans-serif;
+}
+.font-julius{
+  font-family: 'Julius Sans One', sans-serif;
+}
+
+h1, h2{
+  font-family: 'Julius Sans One', sans-serif;
+}
+
+/* Hide scrollbar but keep scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE + Edge */
+  scrollbar-width: none;     /* Firefox */
+}
