@@ -124,20 +124,23 @@ export default function QuestionnaireSection() {
   // Redirect if no state
   // ======================================
   useEffect(() => {
+  if (!isHydrated) return;
+
   const init = async () => {
     setLoading(true);
 
-    if (!isHydrated) return;
-
-    if (!gender && !restoredResult) {
-      router.push("/");
+    try {
+      if (!gender && !restoredResult) {
+        router.push("/");
+        return;
+      }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   init();
-}, []);
+}, [isHydrated, gender, restoredResult]);
 
   // ======================================
   // Questions

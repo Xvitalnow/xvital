@@ -425,7 +425,7 @@ export default function AssessmentFlowModal({
                 />
                   <input
                     type="text"
-                    placeholder="Enter OTP"
+                    placeholder="Enter Your 6-digit OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     className="w-full pl-11 pr-4 rounded-2xl border border-[#AFAFAF]/15 bg-[#FAFAFB] py-4 outline-none focus:border-[#4EDDE2]"
