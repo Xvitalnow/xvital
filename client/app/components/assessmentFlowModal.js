@@ -133,7 +133,7 @@ export default function AssessmentFlowModal({
       setTimer(60);
 
     } catch (err) {
-      showToast("Something went wrong. Please try again.", "error");
+      showToast(err.response?.data?.message || "Something went wrong. Please try again.", "error");
       setIsLoading(false);
       setLoading(false);
     } finally {
@@ -165,6 +165,7 @@ export default function AssessmentFlowModal({
         );
 
       } catch (err) {
+        showToast(err.response?.data?.message || "Something went wrong. Please try again.", "error");
         setIsLoading(false);
         return;
       }
