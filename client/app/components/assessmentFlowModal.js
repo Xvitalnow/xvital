@@ -133,6 +133,9 @@ export default function AssessmentFlowModal({
       setTimer(60);
 
     } catch (err) {
+      showToast("Something went wrong. Please try again.", "error");
+      setIsLoading(false);
+      setLoading(false);
     } finally {
       setIsLoading(false);
       setLoading(false);
@@ -149,7 +152,6 @@ export default function AssessmentFlowModal({
 
       try {
         setIsLoading(true);
-        setLoading(true);
         await toastPromise(
           axios.post(`${BackendURL}/order/verify-otp`, {
             email: email.trim().toLowerCase(),
@@ -184,11 +186,9 @@ export default function AssessmentFlowModal({
 
     try {
       setIsLoading(true);
-      setLoading(true);
 
       const response = await toastPromise(
         (async () => {
-          
           const res = await axios.get(`${BackendURL}/consultations`, {
             params: { email: normalizedEmail },
           });
@@ -199,7 +199,6 @@ export default function AssessmentFlowModal({
           }
           // console.log("Data: ", res.data?.consultation?.status); // debug
           setConsultationStatus(res.data?.consultation?.status || "pending"); // set status for booking button
-          setLoading(false);
           return res;
         })(),
         {
@@ -254,12 +253,14 @@ export default function AssessmentFlowModal({
       startFreshAssessment(selectedGender);
       restoreAssessmentData(restoredData);
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       resetAndClose();
       router.push("/questionnaire");
+      setLoading(false);
     } catch (err) {
       showToast("Something went wrong. Please try again.", "error");
       setIsLoading(false);
+      setLoading(false);
     } finally {
       setIsLoading(false);
       setLoading(false);

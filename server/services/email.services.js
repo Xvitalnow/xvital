@@ -41,19 +41,19 @@ const uploadAttachment = async (
   filePath
 ) => {
   try {
-    console.log("\n========== UPLOAD START ==========");
+    // console.log("\n========== UPLOAD START ==========");
 
     const fileName = path.basename(filePath);
 
-    console.log("FILE NAME:", fileName);
+    // console.log("FILE NAME:", fileName);
 
     const stats = fs.statSync(filePath);
 
-    console.log("FILE SIZE:", stats.size);
+    // console.log("FILE SIZE:", stats.size);
 
     const fileBuffer = fs.readFileSync(filePath);
 
-    console.log("BUFFER SIZE:", fileBuffer.length);
+    // console.log("BUFFER SIZE:", fileBuffer.length);
 
     const form = new FormData();
 
@@ -76,7 +76,7 @@ const uploadAttachment = async (
       }
     );
 
-    console.log("CONTENT LENGTH:", contentLength);
+    //console.log("CONTENT LENGTH:", contentLength);
 
     const res = await axios.post(
       `${process.env.ZOHO_MAIL_BASE_URL}/api/accounts/${accountId}/messages/attachments?uploadType=multipart&fileName=${encodeURIComponent(fileName)}`,
@@ -92,10 +92,10 @@ const uploadAttachment = async (
       }
     );
 
-    console.log(
-      "UPLOAD RESPONSE:",
-      JSON.stringify(res.data, null, 2)
-    );
+    // console.log(
+    //   "UPLOAD RESPONSE:",
+    //   JSON.stringify(res.data, null, 2)
+    // );
 
     const attachmentId =
       res.data?.data?.[0]?.attachmentPath;
@@ -106,10 +106,10 @@ const uploadAttachment = async (
 
     return res.data.data[0];
   } catch (err) {
-    console.log(
-      "UPLOAD ERROR:",
-      JSON.stringify(err.response?.data, null, 2)
-    );
+    //     console.log(
+    //       "UPLOAD ERROR:",
+    //       JSON.stringify(err.response?.data, null, 2)
+    // );
 
     throw err;
   }
@@ -740,9 +740,9 @@ export const sendEmail = async (
         }
       }
 
-      console.log(
-        "\n========== ATTACHMENTS =========="
-      );
+      // console.log(
+      //   "\n========== ATTACHMENTS =========="
+      // );
 
       console.log(
         JSON.stringify(
@@ -752,9 +752,9 @@ export const sendEmail = async (
         )
       );
 
-      console.log(
-        "=================================\n"
-      );
+      // console.log(
+      //   "=================================\n"
+      // );
 
       const payload = {
         fromAddress:
@@ -774,9 +774,9 @@ export const sendEmail = async (
         attachments,
       };
 
-      console.log(
-        "\n========== FINAL PAYLOAD =========="
-      );
+      // console.log(
+      //   "\n========== FINAL PAYLOAD =========="
+      // );
 
       console.log(
         JSON.stringify(
@@ -786,9 +786,9 @@ export const sendEmail = async (
         )
       );
 
-      console.log(
-        "===================================\n"
-      );
+      // console.log(
+      //   "===================================\n"
+      // );
 
       return axios.post(
         `${process.env.ZOHO_MAIL_BASE_URL}/api/accounts/${accountId}/messages`,
@@ -810,10 +810,10 @@ export const sendEmail = async (
       const res =
         await sendRequest(token);
 
-      console.log(
-        "✅ Email sent:",
-        res.data
-      );
+      // console.log(
+      //   "✅ Email sent:",
+      //   res.data
+      // );
 
     } catch (err) {
 
@@ -827,10 +827,10 @@ export const sendEmail = async (
         const res =
           await sendRequest(token);
 
-        console.log(
-          "✅ Email sent (retry):",
-          res.data
-        );
+        // console.log(
+        //   "✅ Email sent (retry):",
+        //   res.data
+        // );
 
       } else {
         throw err;
@@ -839,10 +839,10 @@ export const sendEmail = async (
 
   } catch (error) {
 
-    console.error(
-      "❌ Email error:",
-      error.response?.data ||
-      error.message
-    );
+    // console.error(
+    //   "❌ Email error:",
+    //   error.response?.data ||
+    //   error.message
+    // );
   }
 };
