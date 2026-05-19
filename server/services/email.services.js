@@ -744,13 +744,13 @@ export const sendEmail = async (
       //   "\n========== ATTACHMENTS =========="
       // );
 
-      console.log(
-        JSON.stringify(
-          attachments,
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   JSON.stringify(
+      //     attachments,
+      //     null,
+      //     2
+      //   )
+      // );
 
       // console.log(
       //   "=================================\n"
@@ -778,13 +778,13 @@ export const sendEmail = async (
       //   "\n========== FINAL PAYLOAD =========="
       // );
 
-      console.log(
-        JSON.stringify(
-          payload,
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   JSON.stringify(
+      //     payload,
+      //     null,
+      //     2
+      //   )
+      // );
 
       // console.log(
       //   "===================================\n"
