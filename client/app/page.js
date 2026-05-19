@@ -66,6 +66,21 @@ export default function Home() {
       <ExpertSection />
       <FinalCTA />
       <ScrollToTopButton />
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "XVITAL",
+            url: "https://www.xvital.in",
+            logo: "https://www.xvital.in/primaryLogo.svg",
+            description:
+              "Personalized nutrition and wellness platform for Indian lifestyles.",
+          }),
+        }}
+      />
     </>
   );
 }

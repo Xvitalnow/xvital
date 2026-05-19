@@ -30,5 +30,25 @@ export const metadata = {
 };
 
 export default function ConsultationPage() {
-  return <DietSection />;
+  return <>
+  <DietSection />
+  {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Personalized Diet Plans",
+            url: "https://www.xvital.in/diet",
+            description:
+              "Personalized diet plans for fat loss, energy, digestion, and wellness.",
+            about: {
+              "@type": "Thing",
+              name: "Nutrition & Diet Planning",
+            },
+          }),
+        }}
+      />
+  </>;
 }
