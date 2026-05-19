@@ -219,7 +219,7 @@ const buildEmailHTML = (content) => {
               margin-bottom:32px;
             ">
               <img
-                src="https://xvital.vercel.app/primaryLogo.svg"
+                src="https://www.xvital.in/primaryLogo.svg"
                 alt="XVITAL"
                 style="
                   width:150px;
@@ -340,7 +340,7 @@ const buildEmailHTML = (content) => {
               ">
 
                 <img
-                  src="https://xvital.vercel.app/primaryLogo.svg"
+                  src="https://www.xvital.in/primaryLogo.svg"
                   alt="XVITAL"
                   style="
                     width:160px;
@@ -448,7 +448,7 @@ const buildEmailHTML = (content) => {
               ">
 
                 <img
-                  src="https://xvital.vercel.app/primaryLogo.svg"
+                  src="https://www.xvital.in/primaryLogo.svg"
                   alt="XVITAL"
                   style="width:150px;"
                 />
@@ -536,7 +536,7 @@ const buildEmailHTML = (content) => {
               ">
 
                 <img
-                  src="https://xvital.vercel.app/primaryLogo.svg"
+                  src="https://www.xvital.in/primaryLogo.svg"
                   alt="XVITAL"
                   style="width:150px;"
                 />
@@ -606,7 +606,7 @@ const buildEmailHTML = (content) => {
               ">
 
                 <img
-                  src="https://xvital.vercel.app/primaryLogo.svg"
+                  src="https://www.xvital.in/primaryLogo.svg"
                   alt="XVITAL"
                   style="width:150px;"
                 />
