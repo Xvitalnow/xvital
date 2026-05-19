@@ -5,9 +5,29 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { useLoader } from "../context/LoaderContext";
 import { usePathname, useRouter } from "next/navigation";
-
+import { useEffect } from "react";
 
 export default function Footer() {
+
+  const { loading, setLoading } = useLoader();
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavigation = async (path) => {
+    if (pathname === path) return;
+
+    setLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    router.push(path);
+  };
+
+  useEffect(() => {
+    setLoading(false);
+  }, [pathname]);
+
   return (
     <footer className="bg-[#0F0F12] py-16 border-t border-white/5">
 
@@ -47,21 +67,32 @@ export default function Footer() {
               </h4>
 
               <div className="flex flex-col gap-2 text-sm text-white/60">
-                {/* Replace with buttons with same classes */}
-                <button onClick={() => {}} className="hover:text-white transition flex justify-left cursor-pointer">
-                Home
+
+                <button
+                  onClick={() => handleNavigation("/")}
+                  className="hover:text-white transition flex justify-left cursor-pointer"
+                >
+                  Home
                 </button>
-                <button onClick={() => {}} className="hover:text-white transition flex justify-left cursor-pointer">
-                Diet
+
+                <button
+                  onClick={() => handleNavigation("/diet")}
+                  className="hover:text-white transition flex justify-left cursor-pointer"
+                >
+                  Diet
                 </button>
-                <button onClick={() => {}} className="hover:text-white transition flex justify-left cursor-pointer">
-                Products
+
+                <button
+                  onClick={() => handleNavigation("/products")}
+                  className="hover:text-white transition flex justify-left cursor-pointer"
+                >
+                  Products
                 </button>
 
               </div>
             </div>
 
-            {/* Social Icons - facebook, instagram, youtube, X(twitter), whatsapp business, Linkedin */}
+            {/* Social Icons */}
             <div>
               <h4 className="text-white text-sm font-medium mb-4">
                 Social
@@ -71,25 +102,28 @@ export default function Footer() {
                 <a className="cursor-pointer text-white hover:text-white/80" href="https://www.facebook.com/xvitalnow/" target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:facebook" width={24} />
                 </a>
+
                 <a className="cursor-pointer text-purple-600 hover:text-purple-500/80" href="https://www.instagram.com/xvitalnow/" target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:instagram" width={24} />
                 </a>
+
                 <a className="cursor-pointer text-red-500 hover:text-red-400/80" href="https://www.youtube.com/@Xvitalnow/shorts" target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:youtube" width={24} />
                 </a>
+
                 <a className="cursor-pointer text-blue-400 hover:text-blue-300/80" href="https://x.com/xvitalnow" target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:twitter" width={24} />
                 </a>
+
                 <a className="cursor-pointer text-green-500 hover:text-green-400/80" href="https://wa.me/9118866992?text=Hi%20Xvitalnow,%20I%20want%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:whatsapp" width={24} />
                 </a>
+
                 <a className="cursor-pointer text-blue-600 hover:text-blue-500/80" href="https://www.linkedin.com/in/likith-kumar-658150361/" target="_blank" rel="noopener noreferrer">
                   <Icon icon="mdi:linkedin" width={24} />
                 </a>
               </div>
             </div>
-
-         
 
             {/* CONTACT */}
             <div>
