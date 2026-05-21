@@ -711,7 +711,6 @@ export default function QuestionnaireSection() {
             const payload =
               buildPayload();
 
-              setLoading(true);
             const orderRes =
               await axios.post(
                 `${BackendURL}/consultations/create-order`
@@ -722,11 +721,10 @@ export default function QuestionnaireSection() {
                 ?.order;
               if(!order) {
                 showToast("Failed to create order. Please try again.", "error");
-                setLoading(false);
                 setIsSubmitting(false);
                 return;
               }
-              setLoading(false);
+              
             const razorpay =
               new window.Razorpay(
                 {
@@ -755,7 +753,6 @@ export default function QuestionnaireSection() {
                     async (
                       response
                     ) => {
-                      setLoading(true);
                       await toastPromise(
                         axios.post(
                           `${BackendURL}/consultations/verify-payment`,
@@ -807,7 +804,6 @@ export default function QuestionnaireSection() {
             setIsSubmitting(
               false
             );
-            setLoading(false);
           }
         }}
       />
@@ -830,7 +826,7 @@ export default function QuestionnaireSection() {
             setIsCancelling(
               true
             );
-            setLoading(true);
+            
             await toastPromise(
               axios.patch(
                 `${BackendURL}/consultations/cancel`,
@@ -866,7 +862,6 @@ export default function QuestionnaireSection() {
             setIsCancelling(
               false
             );
-            setLoading(false);
           }
         }}
       />
@@ -903,7 +898,6 @@ export default function QuestionnaireSection() {
             setIsRescheduling(
               true
             );
-            setLoading(true);
             await toastPromise(
               axios.patch(
                 `${BackendURL}/consultations/reschedule`,
@@ -947,12 +941,10 @@ export default function QuestionnaireSection() {
             setShowRescheduleModal(
               false
             );
-            setLoading(false);
           } finally {
             setIsRescheduling(
               false
             );
-            setLoading(false);
           }
         }}
       />
@@ -979,7 +971,7 @@ export default function QuestionnaireSection() {
             </p>
 
             <a
-              href="YOUR-WHATSAPP-LINK"
+              href="https://chat.whatsapp.com/IaHhhhhhf86XAcfe2hYBf4tyyA5g?s=sh&p=i&mlu=0"
               target="_blank"
               className="block w-full bg-green-500 text-white py-3 rounded-2xl font-medium"
             >

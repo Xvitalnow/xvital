@@ -3,7 +3,7 @@ export const packages = [
     id: "reset",
     name: "Reset Protocol",
     duration: "30 Days",
-    amount: 500, 
+    amount: 25000, 
 
     description: "Build your foundation and regain control over your health",
 
@@ -35,7 +35,7 @@ export const packages = [
     id: "control",
     name: "Control Protocol",
     duration: "90 Days",
-    amount: 1500, 
+    amount: 80000, 
 
     description: "Complete transformation system with deep personalization",
 

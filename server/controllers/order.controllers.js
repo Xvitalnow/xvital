@@ -17,8 +17,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const packageDetails = {
-  reset: { name: "Reset Protocol", amount: 500, duration: 30 },
-  control: { name: "Control Protocol", amount: 1500, duration: 90 },
+  reset: { name: "Reset Protocol", amount: 25000, duration: 30 },
+  control: { name: "Control Protocol", amount: 80000, duration: 90 },
 };
 
 // ============================
@@ -34,7 +34,7 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Invalid package" });
     }
 
-    const order = await createRazorpayOrder(selectedPackage.amount);
+    const order = await createRazorpayOrder(selectedPackage.amount * 100); 
 
     res.json({ order });
   } catch (err) {

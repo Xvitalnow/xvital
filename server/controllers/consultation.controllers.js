@@ -86,7 +86,7 @@ export const createConsultationOrder = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      amount: 999,
+      amount: 999 * 100,
       order,
     });
   } catch (error) {
