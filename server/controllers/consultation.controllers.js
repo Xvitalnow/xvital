@@ -526,3 +526,28 @@ export const deleteAllConsultations = async (
       });
     }
 }
+
+// get all consultation from mongodb
+export const getAllConsultations = async (
+  req,
+  res
+) => {
+  try {
+    const consultations =
+      await Consultation.find({});
+
+    return res.status(200).json({
+      success: true,
+      consultations,
+    });
+    
+  }
+    catch (error) {
+      console.error("Get All Error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: "Get all failed",
+      });
+    }
+}

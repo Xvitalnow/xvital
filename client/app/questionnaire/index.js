@@ -751,11 +751,17 @@ export default function QuestionnaireSection() {
 
                 handler: async (response) => {
                   try {
+
+                    console.log(
+                      "RAZORPAY SUCCESS:",
+                      response
+                    );
+
                     await toastPromise(
                       axios.post(
                         `${BackendURL}/consultations/verify-payment`,
                         {
-                          ...payload,
+                          ...buildPayload(),
                           ...response,
                         }
                       ),
@@ -803,9 +809,7 @@ export default function QuestionnaireSection() {
 
                 modal: {
                   ondismiss: () => {
-                    setShowPaymentFailedModal(
-                      true
-                    );
+                    console.log("Razorpay popup closed");
                   },
                 },
               });
@@ -818,11 +822,11 @@ export default function QuestionnaireSection() {
                   response
                 );
 
-                setShowPaymentFailedModal(
-                  true
+                showToast(
+                  "Payment failed. Please try again.",
+                  "error"
                 );
               }
-
             );
             razorpay.open();
           } finally {
