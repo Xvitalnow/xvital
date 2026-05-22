@@ -362,6 +362,10 @@ export default function LeadsModal({
                   ? `Resend code in ${timer}s`
                   : "Resend Verification Code"}
               </button>
+              {/* text to check otp in spam folder if not showing */}
+        <p className="text-xs text-[#3E1747]/65 text-center mt-2">
+          Didn't receive the code? Check your spam folder.
+        </p>
             </div>
           )}
         </div>

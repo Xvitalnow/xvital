@@ -22,7 +22,11 @@ export const createRazorpayOrder = async (amount) => {
 };
 
 export const verifyRazorpayPayment = (payment) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = payment;
+  const { 
+    razorpay_order_id, 
+    razorpay_payment_id, 
+    razorpay_signature 
+    } = payment;
 
   const sign = razorpay_order_id + "|" + razorpay_payment_id;
 

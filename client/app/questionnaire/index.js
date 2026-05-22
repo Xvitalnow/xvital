@@ -752,7 +752,7 @@ export default function QuestionnaireSection() {
                   handler:
                     async (
                       response
-                    ) => {
+                    ) => { 
                       await toastPromise(
                         axios.post(
                           `${BackendURL}/consultations/verify-payment`,

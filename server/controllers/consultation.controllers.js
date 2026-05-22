@@ -82,11 +82,11 @@ export const getBookedSlots = async (req, res) => {
 // ============================================
 export const createConsultationOrder = async (req, res) => {
   try {
-    const order = await createRazorpayOrder(999);
+    const order = await createRazorpayOrder(5);
 
     return res.status(200).json({
       success: true,
-      amount: 999 * 100,
+      amount: 5,
       order,
     });
   } catch (error) {
@@ -162,7 +162,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
     consultation.status = "pending";
 
     consultation.consultationFeePaid = true;
-    consultation.consultationAmount = 999;
+    consultation.consultationAmount = 5;
 
     consultation.razorpay_order_id =
       razorpay_order_id;
@@ -212,7 +212,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
       success: true,
       whatsappEligible: true,
       whatsappLink:
-        "https://chat.whatsapp.com/YOUR-LINK",
+        "https://chat.whatsapp.com/",
       data: consultation,
     });
   } catch (error) {
