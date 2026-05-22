@@ -447,6 +447,10 @@ export default function AssessmentFlowModal({
                   >
                     {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                   </button>
+                  {/* text to check otp in spam folder if not showing */}
+        <p className="text-xs text-[#3E1747]/65 text-center mt-2">
+          Didn't receive the code? Check your spam folder.
+        </p>
                 </>
               )}
 

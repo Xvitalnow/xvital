@@ -137,7 +137,7 @@ export const verifyAndSaveOrder = async (req, res) => {
       // const welcomeKitPath = path.join(process.cwd(), "public/pdf/welcomekit.pdf");
 
       await sendEmail(
-        "XVITAL <orders@xvital.in>",
+        "Team XVITAL <orders@xvital.in>",
         order.email,
         `Welcome to XVITAL 💜 ${order.name}`,
         {

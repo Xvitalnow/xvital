@@ -31,7 +31,7 @@ export const sendLeadOTP = async (req, res) => {
     const otp = generateOTP();
 
     const expiresAt = new Date(
-      Date.now() + 10 * 60 * 1000
+      Date.now() + 5 * 60 * 1000
     );
 
     let lead = await Lead.findOne({
@@ -56,10 +56,10 @@ export const sendLeadOTP = async (req, res) => {
     }
 
     await sendEmail(
-      "XVital <noreply@xvital.in>",
+      "noreply XVITAL <noreply@xvital.in>",
       normalizedEmail,
-      "Your XVital Verification Code",
-      `Your OTP is ${otp}. It expires in 10 minutes.`
+      "Your XVITAL OTP Code will expire in 5 minutes",
+      `${otp}.`
     );
 
     return res.status(200).json({

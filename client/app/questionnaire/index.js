@@ -1033,7 +1033,7 @@ export default function QuestionnaireSection() {
             </div>
 
             <h3 className="text-2xl font-semibold mb-3">
-              Payment Failed ❌
+              Payment Failed
             </h3>
 
             <p className="text-sm text-black/60 mb-6 leading-7">
