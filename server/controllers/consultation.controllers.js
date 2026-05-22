@@ -212,7 +212,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
       success: true,
       whatsappEligible: true,
       whatsappLink:
-        "https://chat.whatsapp.com/",
+        "https://chat.whatsapp.com/IaHhhhhhf86XAcfe2hYBf4tyyA5g?s=sh&p=i&mlu=0",
       data: consultation,
     });
   } catch (error) {

@@ -47,6 +47,8 @@ export default function QuestionnaireSection() {
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [showWhatsappModal, setShowWhatsappModal] =
     useState(false);
+  const [showPaymentFailedModal, setShowPaymentFailedModal] =
+    useState(false);
 
   const [isSubmitting, setIsSubmitting] =
     useState(false);
@@ -124,23 +126,23 @@ export default function QuestionnaireSection() {
   // Redirect if no state
   // ======================================
   useEffect(() => {
-  if (!isHydrated) return;
+    if (!isHydrated) return;
 
-  const init = async () => {
-    setLoading(true);
+    const init = async () => {
+      setLoading(true);
 
-    try {
-      if (!gender && !restoredResult) {
-        router.push("/");
-        return;
+      try {
+        if (!gender && !restoredResult) {
+          router.push("/");
+          return;
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  init();
-}, [isHydrated, gender, restoredResult]);
+    init();
+  }, [isHydrated, gender, restoredResult]);
 
   // ======================================
   // Questions
@@ -202,11 +204,11 @@ export default function QuestionnaireSection() {
     "draft";
 
   const isAlreadyBooked = [
-  "pending",
-  "rescheduled",
-  "completed",
-  "cancelled",
-].includes(normalizedStatus);
+    "pending",
+    "rescheduled",
+    "completed",
+    "cancelled",
+  ].includes(normalizedStatus);
 
   const bookedDate =
     consultationForm?.date ||
@@ -515,16 +517,16 @@ export default function QuestionnaireSection() {
         <div className="max-w-[760px] mx-auto px-5">
           {
             !showResult && (
-                // Heading
-          <div className="text-center mb-8 flex flex-col gap-2">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#3E1747] leading-tight">
-              Complete Your Assessment
-            </h2>
-            <p className="text-[#3E1747]/70 text-lg font-light">
-              {/* very short text */}
-              Answer a few simple questions about your lifestyle and habits to get a personalized nutrition protocol tailored for you.
-            </p>
-          </div>
+              // Heading
+              <div className="text-center mb-8 flex flex-col gap-2">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#3E1747] leading-tight">
+                  Complete Your Assessment
+                </h2>
+                <p className="text-[#3E1747]/70 text-lg font-light">
+                  {/* very short text */}
+                  Answer a few simple questions about your lifestyle and habits to get a personalized nutrition protocol tailored for you.
+                </p>
+              </div>
             )
           }
 
@@ -534,7 +536,7 @@ export default function QuestionnaireSection() {
               ref={containerRef}
               className="bg-white rounded-[30px] p-6"
             >
-           
+
               <ProgressBar
                 step={step}
                 totalSteps={
@@ -719,86 +721,109 @@ export default function QuestionnaireSection() {
             const order =
               orderRes.data
                 ?.order;
-              if(!order) {
-                showToast("Failed to create order. Please try again.", "error");
-                setIsSubmitting(false);
-                return;
-              }
-              
+            if (!order) {
+              showToast("Failed to create order. Please try again.", "error");
+              setIsSubmitting(false);
+              return;
+            }
+
             const razorpay =
-              new window.Razorpay(
-                {
-                  key: process.env
-                    .NEXT_PUBLIC_RAZORPAY_KEY,
+              new window.Razorpay({
+                key: process.env
+                  .NEXT_PUBLIC_RAZORPAY_KEY,
 
-                  amount:
-                    order.amount,
+                amount: order.amount,
 
-                  currency:
-                    "INR",
+                currency: "INR",
 
-                  order_id:
-                    order.id,
+                order_id: order.id,
 
-                  name: "X Vital",
-                  description: "Consultation Booking",
+                name: "X Vital",
 
-                  prefill: {
-                    name: payload.name,
-                    email: payload.email,
-                    contact: payload.phone,
-                  },
+                description:
+                  "Consultation Booking",
 
-                  handler:
-                    async (
-                      response
-                    ) => { 
-                      await toastPromise(
-                        axios.post(
-                          `${BackendURL}/consultations/verify-payment`,
-                          {
-                            ...payload,
-                            ...response,
-                          }
-                        ), {
-                          loading: "Verifying payment...",
-                          success: "Payment successful! Booking confirmed.",
-                          error: "Payment verification failed."
-                        }
-                      );
+                prefill: {
+                  name: payload.name,
+                  email: payload.email,
+                  contact: payload.phone,
+                },
 
-                      setConsultationStatus(
-                        "pending"
-                      );
-
-                      setRestoredResult(
+                handler: async (response) => {
+                  try {
+                    await toastPromise(
+                      axios.post(
+                        `${BackendURL}/consultations/verify-payment`,
                         {
-                          totalScore,
-                          resultData,
-                          bookingStatus:
-                            "pending",
-                          bookedDate:
-                            consultationForm.date,
-                          bookedTime:
-                            consultationForm.time,
+                          ...payload,
+                          ...response,
                         }
-                      );
+                      ),
+                      {
+                        loading:
+                          "Verifying payment...",
 
-                      setShowPopup(
-                        false
-                      );
+                        success:
+                          "Payment successful! Booking confirmed.",
 
-                      setShowResult(
-                        true
-                      );
+                        error:
+                          "Payment verification failed.",
+                      }
+                    );
 
-                      setShowWhatsappModal(
-                        true
-                      );
-                    },
-                }
-              );
+                    setConsultationStatus(
+                      "pending"
+                    );
 
+                    setRestoredResult({
+                      totalScore,
+                      resultData,
+                      bookingStatus:
+                        "pending",
+                      bookedDate:
+                        consultationForm.date,
+                      bookedTime:
+                        consultationForm.time,
+                    });
+
+                    setShowPopup(false);
+
+                    setShowResult(true);
+
+                    setShowWhatsappModal(true);
+
+                  } catch (err) {
+                    console.error(err);
+
+                    setShowPaymentFailedModal(
+                      true
+                    );
+                  }
+                },
+
+                modal: {
+                  ondismiss: () => {
+                    setShowPaymentFailedModal(
+                      true
+                    );
+                  },
+                },
+              });
+
+            razorpay.on(
+              "payment.failed",
+              function (response) {
+                console.error(
+                  "Payment Failed:",
+                  response
+                );
+
+                setShowPaymentFailedModal(
+                  true
+                );
+              }
+
+            );
             razorpay.open();
           } finally {
             setIsSubmitting(
@@ -826,7 +851,7 @@ export default function QuestionnaireSection() {
             setIsCancelling(
               true
             );
-            
+
             await toastPromise(
               axios.patch(
                 `${BackendURL}/consultations/cancel`,
@@ -989,6 +1014,55 @@ export default function QuestionnaireSection() {
               Maybe Later
             </button>
           </div>
+        </div>
+      )}
+      {/* Payment Failed Modal */}
+      {showPaymentFailedModal && (
+        <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center px-4">
+
+          <div className="bg-white rounded-[30px] p-7 max-w-md w-full text-center">
+
+            <div className="w-16 h-16 bg-red-100 rounded-full mx-auto flex items-center justify-center mb-5">
+
+              <Icon
+                icon="solar:close-circle-bold"
+                width="34"
+                className="text-red-500"
+              />
+
+            </div>
+
+            <h3 className="text-2xl font-semibold mb-3">
+              Payment Failed ❌
+            </h3>
+
+            <p className="text-sm text-black/60 mb-6 leading-7">
+              Your payment was not completed.
+              Please try again to confirm
+              your consultation booking.
+            </p>
+
+            <button
+              onClick={() => {
+                setShowPaymentFailedModal(false);
+                setShowPopup(true);
+              }}
+              className="block w-full bg-[#3E1747] text-white py-3 rounded-2xl font-medium"
+            >
+              Try Again
+            </button>
+
+            <button
+              onClick={() =>
+                setShowPaymentFailedModal(false)
+              }
+              className="mt-3 text-sm text-black/50"
+            >
+              Cancel
+            </button>
+
+          </div>
+
         </div>
       )}
     </>
