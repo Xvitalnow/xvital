@@ -82,11 +82,11 @@ export const getBookedSlots = async (req, res) => {
 // ============================================
 export const createConsultationOrder = async (req, res) => {
   try {
-    const order = await createRazorpayOrder(2);
+    const order = await createRazorpayOrder(999);
 
     return res.status(200).json({
       success: true,
-      amount: 2,
+      amount: 999,
       order,
     });
   } catch (error) {
@@ -162,7 +162,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
     consultation.status = "pending";
 
     consultation.consultationFeePaid = true;
-    consultation.consultationAmount = 2;
+    consultation.consultationAmount = 999;
 
     consultation.razorpay_order_id =
       razorpay_order_id;
