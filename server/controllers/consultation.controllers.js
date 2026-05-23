@@ -175,38 +175,49 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
     await consultation.save();
 
     try {
-  const pdfPath = await generateReceiptPDF({
-    name: consultation.name,
-    email: consultation.email,
-    date: consultation.date,
-    time: consultation.time,
-    paymentId: razorpay_payment_id,
-  });
+      const pdfPath = await generateReceiptPDF({
+        name: consultation.name,
+        email: consultation.email,
+        date: consultation.date,
+        time: consultation.time,
+        paymentId: razorpay_payment_id,
+      });
 
-    await sendEmail(
-    "XVITAL BOOKING <bookings@xvital.in>",
-    consultation.email,
-    "Consultation Booked Successfully",
-    {
-      name: consultation.name,
-      date: consultation.date,
-      time: consultation.time,
-      type: "booked",
-      message: "Your consultation has been booked successfully. We will connect with you at your scheduled time.",
-    },
-    [pdfPath]
-  ); 
+      await sendEmail(
+        "XVITAL BOOKING <bookings@xvital.in>",
+        consultation.email,
+        "Consultation Booked Successfully",
+        {
+          name: consultation.name,
+          date: consultation.date,
+          time: consultation.time,
+          type: "booked",
+          message: "Your consultation has been booked successfully. We will connect with you at your scheduled time.",
+        },
+        [pdfPath]
+      );
 
-  if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+      if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
 
-} catch (err) {
-  console.error("PDF/Email error:", err);
-}
+    } catch (err) {
+      console.error("PDF/Email error:", err);
+    }
 
-    await createOrUpdateZohoContact({
-      ...consultation.toObject(),
-      status: "pending",
-    });
+    try {
+
+      await createOrUpdateZohoContact({
+        ...consultation.toObject(),
+        status: "pending",
+      });
+
+    } catch (err) {
+
+      console.error(
+        "ZOHO UPDATE ERROR:",
+        err
+      );
+
+    }
 
     return res.status(200).json({
       success: true,
@@ -272,7 +283,7 @@ export const getConsultationsByEmail = async (
       parsed = contact.Description
         ? JSON.parse(contact.Description)
         : {};
-    } catch {}
+    } catch { }
 
     return res.status(200).json({
       success: true,
@@ -335,10 +346,21 @@ export const cancelConsultation = async (
 
     await consultation.save();
 
-    await createOrUpdateZohoContact({
-      ...consultation.toObject(),
-      status: "cancelled",
-    });
+    try {
+
+  await createOrUpdateZohoContact({
+    ...consultation.toObject(),
+    status: "cancelled",
+  });
+
+} catch (err) {
+
+  console.error(
+    "ZOHO UPDATE ERROR:",
+    err
+  );
+
+}
     // send cancellation email
     await sendEmail(
       "XVITAL CANCELLATION <bookings@xvital.in>",
@@ -428,10 +450,21 @@ export const rescheduleConsultation = async (
 
     await consultation.save();
 
-    await createOrUpdateZohoContact({
-      ...consultation.toObject(),
-      status: "rescheduled",
-    });
+    try {
+
+  await createOrUpdateZohoContact({
+    ...consultation.toObject(),
+    status: "rescheduled",
+  });
+
+} catch (err) {
+
+  console.error(
+    "ZOHO UPDATE ERROR:",
+    err
+  );
+
+}
 
     // send rescheduling email
     await sendEmail(
@@ -515,16 +548,16 @@ export const deleteAllConsultations = async (
       success: true,
       message: "All consultations deleted",
     });
-    
-  }
-    catch (error) {
-      console.error("Delete All Error:", error);
 
-      return res.status(500).json({
-        success: false,
-        message: "Delete all failed",
-      });
-    }
+  }
+  catch (error) {
+    console.error("Delete All Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Delete all failed",
+    });
+  }
 }
 
 // get all consultation from mongodb
@@ -540,14 +573,14 @@ export const getAllConsultations = async (
       success: true,
       consultations,
     });
-    
-  }
-    catch (error) {
-      console.error("Get All Error:", error);
 
-      return res.status(500).json({
-        success: false,
-        message: "Get all failed",
-      });
-    }
+  }
+  catch (error) {
+    console.error("Get All Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Get all failed",
+    });
+  }
 }

@@ -761,8 +761,23 @@ export default function QuestionnaireSection() {
                       axios.post(
                         `${BackendURL}/consultations/verify-payment`,
                         {
-                          ...buildPayload(),
-                          ...response,
+                          email:
+                            consultationForm.email,
+
+                          date:
+                            consultationForm.date,
+
+                          time:
+                            consultationForm.time,
+
+                          razorpay_order_id:
+                            response.razorpay_order_id,
+
+                          razorpay_payment_id:
+                            response.razorpay_payment_id,
+
+                          razorpay_signature:
+                            response.razorpay_signature,
                         }
                       ),
                       {
