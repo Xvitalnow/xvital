@@ -93,6 +93,9 @@ export const createOrUpdateZohoContact = async (data) => {
         time: data.time,
       },
 
+      // consultation Amount
+      amount: data.amount || 0,
+
       foodRestrictions: data.foodRestrictions || "",
     });
 

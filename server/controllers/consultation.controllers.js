@@ -163,7 +163,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
     consultation.status = "pending";
 
     consultation.consultationFeePaid = true;
-    consultation.consultationAmount = 999;
+    consultation.consultationAmount = 999; 
 
     consultation.razorpay_order_id =
       razorpay_order_id;
