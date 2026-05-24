@@ -189,6 +189,7 @@ export const verifyLeadOTP = async (req, res) => {
           new: true,
         }
       );
+      
 
 
     // ===============================
@@ -253,3 +254,24 @@ export const verifyLeadOTP = async (req, res) => {
     });
   }
 };
+
+// get all leads
+export const getAllLeads = async (req, res) => {
+  try {
+    const leads = await Lead.find().sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: leads,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch leads",
+    });
+  }
+}

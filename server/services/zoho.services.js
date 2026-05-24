@@ -145,51 +145,137 @@ export const createOrUpdateZohoContact = async (data) => {
 };
 
 // ===============================
-// CREATE LEAD (CONSULTATION)
+// SEARCH LEAD
 // ===============================
-export const createZohoLead = async (data) => {
+export const searchZohoLeadByEmail = async (
+  email
+) => {
   try {
-    const [firstName, ...rest] = data.name.trim().split(" ");
-    const lastName = rest.join(" ") || firstName || "Unknown";
 
-    // 🔥 JSON description (your idea — correct)
-    const descriptionJSON = JSON.stringify(
-      {
-        type: "consultation_booking",
-        gender: data.gender,
-        source: "xVital",
+    const res = await zohoRequest({
+      method: "GET",
+
+      url:
+        `${process.env.ZOHO_BASE_URL}/crm/v2/Leads/search`,
+
+      params: {
+        criteria: `(Email:equals:${email})`,
       },
-      null,
-      2
+    });
+
+    return res.data.data?.[0] || null;
+
+  } catch (error) {
+
+    if (
+      error.response?.status === 204
+    ) {
+      return null;
+    }
+
+    throw new Error(
+      "Zoho lead search failed"
     );
+  }
+};
+
+// ====================================
+// CREATE LEAD OR UPDATE CONTACT + TASK
+// ====================================
+export const createZohoLead = async (
+  data
+) => {
+
+  try {
+
+    // --------------------------------
+    // CHECK EXISTING LEAD
+    // --------------------------------
+    const existing =
+      await searchZohoLeadByEmail(
+        data.email
+      );
+
+    // already exists
+    if (existing) {
+
+      return {
+        leadId: existing.id,
+        duplicate: true,
+      };
+    }
+
+    const [firstName, ...rest] =
+      data.name.trim().split(" ");
+
+    const lastName =
+      rest.join(" ") ||
+      firstName ||
+      "Unknown";
+
+    const descriptionJSON =
+      JSON.stringify(
+        {
+          type:
+            "consultation_booking",
+
+          gender:
+            data.gender,
+
+          source:
+            "xVital",
+        },
+        null,
+        2
+      );
 
     const payload = {
       First_Name: firstName,
+
       Last_Name: lastName,
+
       Email: data.email,
+
       Phone: data.phone,
 
-      // required workaround
       Company: "xVital",
 
-      // 🔥 using existing field smartly
       Lead_Source: "Website",
+
       Description: descriptionJSON,
     };
 
-    const res = await zohoRequest({
-      method: "POST",
-      url: `${process.env.ZOHO_BASE_URL}/crm/v2/Leads`,
-      data: { data: [payload] },
-    });
+    const res =
+      await zohoRequest({
+        method: "POST",
+
+        url:
+          `${process.env.ZOHO_BASE_URL}/crm/v2/Leads`,
+
+        data: {
+          data: [payload],
+        },
+      });
 
     return {
-      leadId: res.data.data?.[0]?.details?.id,
+      leadId:
+        res.data.data?.[0]
+          ?.details?.id,
+
+      duplicate: false,
     };
 
   } catch (error) {
-    console.error("Zoho Lead Error:", error.response?.data || error.message);
-    throw new Error("Zoho lead creation failed");
+
+    console.error(
+      "Zoho Lead Error:",
+      error.response?.data ||
+      error.message
+    );
+
+    throw new Error(
+      "Zoho lead creation failed"
+    );
   }
 };
 
