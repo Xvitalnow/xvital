@@ -17,8 +17,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const packageDetails = {
-  reset: { name: "Reset Protocol", amount: 2500, duration: 30 },
-  control: { name: "Control Protocol", amount: 800, duration: 90 },
+  reset: { name: "Reset Protocol", amount: 25000, duration: 30 },
+  control: { name: "Control Protocol", amount: 80000, duration: 90 },
 };
 
 // ============================
