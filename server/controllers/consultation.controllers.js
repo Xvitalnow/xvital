@@ -9,6 +9,7 @@ import { Consultation } from "../models/consultation.models.js";
 import {
   createOrUpdateZohoContact,
   searchZohoContactByEmail,
+  createOrUpdateZohoTask,
 } from "../services/zoho.services.js";
 
 import {
@@ -209,6 +210,22 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
         ...consultation.toObject(),
         status: "pending",
       });
+      try {
+
+        await createOrUpdateZohoTask({
+          ...consultation.toObject(),
+          status: "pending",
+        });
+
+      } catch (err) {
+
+        console.error(
+          "ZOHO TASK ERROR:",
+          err
+        );
+
+      }
+
 
     } catch (err) {
 
@@ -348,19 +365,36 @@ export const cancelConsultation = async (
 
     try {
 
-  await createOrUpdateZohoContact({
-    ...consultation.toObject(),
-    status: "cancelled",
-  });
+      await createOrUpdateZohoContact({
+        ...consultation.toObject(),
+        status: "cancelled",
+      });
 
-} catch (err) {
+      const task =
+        await createOrUpdateZohoTask({
+          ...consultation.toObject(),
+          status: "pending",
+        });
 
-  console.error(
-    "ZOHO UPDATE ERROR:",
-    err
-  );
+      if (
+        task?.taskId &&
+        !consultation.zohoTaskId
+      ) {
 
-}
+        consultation.zohoTaskId =
+          task.taskId;
+
+        await consultation.save();
+      }
+
+    } catch (err) {
+
+      console.error(
+        "ZOHO UPDATE ERROR:",
+        err
+      );
+
+    }
     // send cancellation email
     await sendEmail(
       "XVITAL CANCELLATION <bookings@xvital.in>",
@@ -452,19 +486,34 @@ export const rescheduleConsultation = async (
 
     try {
 
-  await createOrUpdateZohoContact({
-    ...consultation.toObject(),
-    status: "rescheduled",
-  });
+      await createOrUpdateZohoContact({
+        ...consultation.toObject(),
+        status: "rescheduled",
+      });
+      try {
 
-} catch (err) {
+        await createOrUpdateZohoTask({
+          ...consultation.toObject(),
+          status: "rescheduled",
+        });
 
-  console.error(
-    "ZOHO UPDATE ERROR:",
-    err
-  );
+      } catch (err) {
 
-}
+        console.error(
+          "ZOHO TASK ERROR:",
+          err
+        );
+
+      }
+
+    } catch (err) {
+
+      console.error(
+        "ZOHO UPDATE ERROR:",
+        err
+      );
+
+    }
 
     // send rescheduling email
     await sendEmail(

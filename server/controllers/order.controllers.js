@@ -17,27 +17,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const packageDetails = {
-  reset: { name: "Reset Protocol", amount: 25000, duration: 30 },
-  control: { name: "Control Protocol", amount: 80000, duration: 90 },
+  reset: { name: "Reset Protocol", amount: 2500, duration: 30 },
+  control: { name: "Control Protocol", amount: 800, duration: 90 },
 };
 
 // ============================
-// ✅ CREATE ORDER (Razorpay)
+// ✅ CREATE ORDER with console logs for debugging (Razorpay)
 // ============================
 export const createOrder = async (req, res) => {
   try {
     const { packageId } = req.body;
+    console.log("Received packageId:", packageId);
 
     const selectedPackage = packageDetails[packageId];
+    console.log("Selected Package:", selectedPackage);
 
     if (!selectedPackage) {
+      console.log("Invalid packageId:", packageId);
       return res.status(400).json({ error: "Invalid package" });
     }
 
-    const order = await createRazorpayOrder(selectedPackage.amount * 100); 
+    const order = await createRazorpayOrder(selectedPackage.amount); 
+    console.log("Razorpay Order Created:", order);
 
     res.json({ order });
   } catch (err) {
+    console.error("Error in createOrder:", err);
     res.status(500).json({ error: "Order creation failed" });
   }
 };

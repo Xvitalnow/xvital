@@ -253,6 +253,8 @@ export default function AssessmentFlowModal({
       };
       startFreshAssessment(selectedGender);
       restoreAssessmentData(restoredData);
+      // save email to local storage for later use in packages page
+      localStorage.setItem("email", normalizedEmail);
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 200));
       resetAndClose();

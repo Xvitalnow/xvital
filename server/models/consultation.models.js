@@ -109,10 +109,18 @@ const consultationSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    zohoTaskId: {
+      type: String,
+      default: "",
+    },
 
     consultationFeePaid: {
       type: Boolean,
       default: false,
+    },
+    zohoMeetingId: {
+      type: String,
+      default: "",
     },
 
     consultationAmount: {

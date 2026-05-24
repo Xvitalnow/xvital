@@ -3,6 +3,7 @@ import { Consultation } from "../models/consultation.models.js";
 
 import {
   createOrUpdateZohoContact,
+  createZohoLead
 } from "../services/zoho.services.js";
 
 import {
@@ -189,9 +190,23 @@ export const verifyLeadOTP = async (req, res) => {
         }
       );
 
+
+    // ===============================
+    // SAVE ZOHO LEAD
+    // ===============================
+    await createZohoLead({
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone.trim(),
+      gender,
+    });
+
+
+
     // =====================================
     // SAVE ZOHO CONTACT
     // =====================================
+
     const zoho =
       await createOrUpdateZohoContact({
         name: name.trim(),

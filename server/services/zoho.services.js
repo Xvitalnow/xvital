@@ -171,7 +171,6 @@ export const createZohoLead = async (data) => {
 
       // 🔥 using existing field smartly
       Lead_Source: "Website",
-
       Description: descriptionJSON,
     };
 
@@ -190,6 +189,161 @@ export const createZohoLead = async (data) => {
     throw new Error("Zoho lead creation failed");
   }
 };
+
+// ==============================================================
+// SAVE CONSULTATION SCHEDULE OR UPDATE SCHEDULE IN ZOHO TASK
+// ==============================================================
+export const createOrUpdateZohoTask =
+  async (data) => {
+
+    try {
+
+      const existingContact =
+        await searchZohoContactByEmail(
+          data.email
+        );
+
+      if (!existingContact) {
+        throw new Error(
+          "Zoho contact not found"
+        );
+      }
+
+      const bookingDate =
+        new Date(data.date);
+
+      const formattedDate =
+        bookingDate
+          .toISOString()
+          .split("T")[0];
+
+      let taskStatus =
+        "Not Started";
+
+      if (
+        data.status ===
+        "completed"
+      ) {
+        taskStatus =
+          "Completed";
+      }
+
+      if (
+        data.status ===
+        "cancelled"
+      ) {
+        taskStatus =
+          "Cancelled";
+      }
+
+      if (
+        data.status ===
+        "rescheduled"
+      ) {
+        taskStatus =
+          "Deferred";
+      }
+
+      const payload = {
+        Subject:
+          `XVITAL Consultation - ${data.name}`,
+
+        Due_Date:
+          formattedDate,
+
+        Status:
+          taskStatus,
+
+        Priority:
+          "High",
+
+        Contact_Name:
+          existingContact.id,
+
+        Description:
+          JSON.stringify(
+            {
+              type:
+                "consultation_task",
+
+              consultationTime:
+                data.time,
+
+              status:
+                data.status,
+
+              source:
+                "xVital",
+            },
+            null,
+            2
+          ),
+      };
+
+     // ======================
+// UPDATE EXISTING TASK
+// ======================
+
+if (data.zohoTaskId) {
+
+  await zohoRequest({
+    method: "PUT",
+
+    url:
+      `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
+
+    data: {
+      data: [
+        {
+          id: data.zohoTaskId,
+          ...payload,
+        },
+      ],
+    },
+  });
+
+  return {
+    taskId:
+      data.zohoTaskId,
+  };
+}
+
+// ======================
+// CREATE NEW TASK
+// ======================
+
+const res =
+  await zohoRequest({
+    method: "POST",
+
+    url:
+      `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
+
+    data: {
+      data: [payload],
+    },
+  });
+
+      return {
+        taskId:
+          res.data.data?.[0]
+            ?.details?.id,
+      };
+
+    } catch (error) {
+
+      console.error(
+        "Zoho Task Error:",
+        error.response?.data ||
+        error.message
+      );
+
+      throw new Error(
+        "Zoho task failed"
+      );
+    }
+  };
+
 
 // ===============================
 // CREATE DEAL (ORDER / PURCHASE)
