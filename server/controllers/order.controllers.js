@@ -208,12 +208,11 @@ export const sendOrderOTP = async (req, res) => {
 
     await order.save();
 
-    await sendEmail(
-      "XVITAL <orders@xvital.in>",
+     await sendEmail(
+      "noreply XVITAL <noreply@xvital.in>",
       normalizedEmail,
-      "Your OTP Code",
-      `${otp}`,
-
+      "Your XVITAL OTP Code will expire in 5 minutes",
+      `${otp}`
     );
 
     return res.json({

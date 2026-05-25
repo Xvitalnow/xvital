@@ -60,7 +60,7 @@ export const sendLeadOTP = async (req, res) => {
       "noreply XVITAL <noreply@xvital.in>",
       normalizedEmail,
       "Your XVITAL OTP Code will expire in 5 minutes",
-      `${otp}.`
+      `${otp}`
     );
 
     return res.status(200).json({
