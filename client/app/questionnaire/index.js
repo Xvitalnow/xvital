@@ -657,23 +657,26 @@ export default function QuestionnaireSection() {
         }
         gender={gender}
         onSuccess={(user) => {
-          setConsultationForm(
-            (prev) => ({
-              ...prev,
-              name: user.name,
-              email:
-                user.email,
-              phone:
-                user.phone,
-            })
+
+          setConsultationForm((prev) => ({
+            ...prev,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+          }));
+
+          // 🔥 restore backend status
+          setConsultationStatus(
+            user.status || "draft"
           );
 
-          setShowLeadsModal(
-            false
-          );
+          setShowLeadsModal(false);
 
-          setShowResult(
-            true
+          setShowResult(true);
+
+          showToast(
+            "Assessment verified successfully",
+            "success"
           );
         }}
       />

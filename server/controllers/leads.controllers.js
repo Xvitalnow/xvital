@@ -154,41 +154,133 @@ export const verifyLeadOTP = async (req, res) => {
     // =====================================
     // SAVE CONSULTATION DRAFT
     // =====================================
-    const consultation =
-      await Consultation.findOneAndUpdate(
-        { email: normalizedEmail },
-        {
-          name: name.trim(),
-          phone: phone.trim(),
-          email: normalizedEmail,
-          gender,
+    let consultation =
+  await Consultation.findOne({
+    email: normalizedEmail,
+  });
 
-          weight: Number(weight || 0),
-          height: Number(height || 0),
-          age: Number(age || 0),
+// =====================================
+// UPDATE EXISTING USER
+// =====================================
+if (consultation) {
 
-          healthScore,
-          healthLabel,
-          bodyInsights,
-          whyThisHappens,
-          possibleOutcomes,
-          foodRestrictions: Array.isArray(foodRestrictions)
-            ? foodRestrictions
-            : foodRestrictions
-              ? [foodRestrictions]
-              : [],
+  // ONLY UPDATE HEALTH DATA
+  consultation.name = name.trim();
+  consultation.phone = phone.trim();
+  consultation.gender = gender;
 
-          questionnaireAnswers: questionnaireAnswers || {},
-          questionnaireSubAnswers: questionnaireSubAnswers || {},
-          questionnaireExtraInputs: questionnaireExtraInputs || {},
+  consultation.weight =
+    Number(weight || 0);
 
-          status: "draft",
-        },
-        {
-          upsert: true,
-          new: true,
-        }
-      );
+  consultation.height =
+    Number(height || 0);
+
+  consultation.age =
+    Number(age || 0);
+
+  consultation.healthScore =
+    healthScore;
+
+  consultation.healthLabel =
+    healthLabel;
+
+  consultation.bodyInsights =
+    bodyInsights;
+
+  consultation.whyThisHappens =
+    whyThisHappens;
+
+  consultation.possibleOutcomes =
+    possibleOutcomes;
+
+  consultation.foodRestrictions =
+    Array.isArray(foodRestrictions)
+      ? foodRestrictions
+      : foodRestrictions
+      ? [foodRestrictions]
+      : [];
+
+  consultation.questionnaireAnswers =
+    questionnaireAnswers || {};
+
+  consultation.questionnaireSubAnswers =
+    questionnaireSubAnswers || {};
+
+  consultation.questionnaireExtraInputs =
+    questionnaireExtraInputs || {};
+
+  consultation.lastAssessmentAt =
+    new Date();
+
+  consultation.assessmentCount =
+    (consultation.assessmentCount || 0) + 1;
+
+  // ❌ DO NOT TOUCH:
+  // status
+  // booking
+  // payment
+  // consultation schedule
+
+  await consultation.save();
+
+} else {
+
+  // =====================================
+  // CREATE NEW USER
+  // =====================================
+  consultation =
+    await Consultation.create({
+      name: name.trim(),
+
+      phone: phone.trim(),
+
+      email: normalizedEmail,
+
+      gender,
+
+      weight:
+        Number(weight || 0),
+
+      height:
+        Number(height || 0),
+
+      age:
+        Number(age || 0),
+
+      healthScore,
+
+      healthLabel,
+
+      bodyInsights,
+
+      whyThisHappens,
+
+      possibleOutcomes,
+
+      foodRestrictions:
+        Array.isArray(foodRestrictions)
+          ? foodRestrictions
+          : foodRestrictions
+          ? [foodRestrictions]
+          : [],
+
+      questionnaireAnswers:
+        questionnaireAnswers || {},
+
+      questionnaireSubAnswers:
+        questionnaireSubAnswers || {},
+
+      questionnaireExtraInputs:
+        questionnaireExtraInputs || {},
+
+      status: consultation?.status || "draft",
+
+      assessmentCount: 1,
+
+      lastAssessmentAt:
+        new Date(),
+    });
+}
       
 
 
@@ -230,7 +322,7 @@ export const verifyLeadOTP = async (req, res) => {
         questionnaireSubAnswers: questionnaireSubAnswers || {},
         questionnaireExtraInputs: questionnaireExtraInputs || {},
 
-        status: "draft",
+        status: consultation?.status || "draft",
       });
 
     if (zoho?.contact) {
@@ -243,6 +335,9 @@ export const verifyLeadOTP = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Verified successfully",
+      consultation: {
+        status: consultation.status,
+      }
     });
 
   } catch (error) {

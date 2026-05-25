@@ -279,6 +279,61 @@ export const createZohoLead = async (
   }
 };
 
+// ===============================
+// SEARCH TASK BY CONTACT
+// ===============================
+export const searchZohoTask = async (
+  email
+) => {
+
+  try {
+
+    // find contact
+    const existingContact =
+      await searchZohoContactByEmail(
+        email
+      );
+
+    if (!existingContact) {
+      return null;
+    }
+
+    // fetch tasks
+    const res =
+      await zohoRequest({
+        method: "GET",
+
+        url:
+          `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
+      });
+
+    const tasks =
+      res.data.data || [];
+
+    // find matching task
+    const existingTask =
+      tasks.find((task) => {
+
+        return (
+          task.Contact_Name?.id ===
+          existingContact.id
+        );
+      });
+
+    return existingTask || null;
+
+  } catch (error) {
+
+    console.error(
+      "TASK SEARCH ERROR:",
+      error.response?.data ||
+      error.message
+    );
+
+    return null;
+  }
+};
+
 // ==============================================================
 // SAVE CONSULTATION SCHEDULE OR UPDATE SCHEDULE IN ZOHO TASK
 // ==============================================================
@@ -289,6 +344,10 @@ export const createOrUpdateZohoTask =
 
       const existingContact =
         await searchZohoContactByEmail(
+          data.email
+        );
+      const existingTask =
+        await searchZohoTask(
           data.email
         );
 
@@ -346,8 +405,9 @@ export const createOrUpdateZohoTask =
         Priority:
           "High",
 
-        Contact_Name:
-          existingContact.id,
+        Contact_Name: {
+          id: existingContact.id,
+        },
 
         Description:
           JSON.stringify(
@@ -363,55 +423,59 @@ export const createOrUpdateZohoTask =
 
               source:
                 "xVital",
+
+              phone: data.phone,
+
+              email: data.email,
             },
             null,
             2
           ),
       };
 
-     // ======================
-// UPDATE EXISTING TASK
-// ======================
+      // ======================
+      // UPDATE EXISTING TASK
+      // ======================
 
-if (data.zohoTaskId) {
+      if (data.zohoTaskId || existingTask) {
 
-  await zohoRequest({
-    method: "PUT",
+        await zohoRequest({
+          method: "PUT",
 
-    url:
-      `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
+          url:
+            `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
 
-    data: {
-      data: [
-        {
-          id: data.zohoTaskId,
-          ...payload,
-        },
-      ],
-    },
-  });
+          data: {
+            data: [
+              {
+                id: data.zohoTaskId || existingTask.id,
+                ...payload,
+              },
+            ],
+          },
+        });
 
-  return {
-    taskId:
-      data.zohoTaskId,
-  };
-}
+        return {
+          taskId:
+            data.zohoTaskId || existingTask.id,
+        };
+      }
 
-// ======================
-// CREATE NEW TASK
-// ======================
+      // ======================
+      // CREATE NEW TASK
+      // ======================
 
-const res =
-  await zohoRequest({
-    method: "POST",
+      const res =
+        await zohoRequest({
+          method: "POST",
 
-    url:
-      `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
+          url:
+            `${process.env.ZOHO_BASE_URL}/crm/v2/Tasks`,
 
-    data: {
-      data: [payload],
-    },
-  });
+          data: {
+            data: [payload],
+          },
+        });
 
       return {
         taskId:
@@ -491,7 +555,9 @@ export const createZohoDealOrder = async (data) => {
 
       Closing_Date: new Date().toISOString().split("T")[0],
 
-      Contact_Name: existingContact.id,
+      Contact_Name: {
+        id: existingContact.id,
+      },
 
       Description: descriptionJSON,
     };

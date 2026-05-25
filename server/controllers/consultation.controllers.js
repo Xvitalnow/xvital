@@ -1,8 +1,4 @@
-// ============================================
-// controllers/consultation.controllers.js
-// FINAL FULL VERSION
-// draft -> pending -> cancelled -> rescheduled -> completed
-// ============================================
+
 
 import { Consultation } from "../models/consultation.models.js";
 
@@ -163,7 +159,7 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
     consultation.status = "pending";
 
     consultation.consultationFeePaid = true;
-    consultation.consultationAmount = 999; 
+    consultation.consultationAmount = 999;
 
     consultation.razorpay_order_id =
       razorpay_order_id;
@@ -212,10 +208,22 @@ export const verifyConsultationPaymentAndBook = async (req, res) => {
       });
       try {
 
-        await createOrUpdateZohoTask({
-          ...consultation.toObject(),
-          status: "pending",
-        });
+        const task =
+          await createOrUpdateZohoTask({
+            ...consultation.toObject(),
+            status: "pending",
+          });
+
+        if (
+          task?.taskId &&
+          !consultation.zohoTaskId
+        ) {
+
+          consultation.zohoTaskId =
+            task.taskId;
+
+          await consultation.save();
+        }
 
       } catch (err) {
 
@@ -371,22 +379,21 @@ export const cancelConsultation = async (
       });
 
       const task =
-        await createOrUpdateZohoTask({
-          ...consultation.toObject(),
-          status: "pending",
-        });
+  await createOrUpdateZohoTask({
+    ...consultation.toObject(),
+    status: "cancelled",
+  });
 
-      if (
-        task?.taskId &&
-        !consultation.zohoTaskId
-      ) {
+if (
+  task?.taskId &&
+  !consultation.zohoTaskId
+) {
 
-        consultation.zohoTaskId =
-          task.taskId;
+  consultation.zohoTaskId =
+    task.taskId;
 
-        await consultation.save();
-      }
-
+  await consultation.save();
+}
     } catch (err) {
 
       console.error(
@@ -492,10 +499,22 @@ export const rescheduleConsultation = async (
       });
       try {
 
-        await createOrUpdateZohoTask({
-          ...consultation.toObject(),
-          status: "rescheduled",
-        });
+        const task =
+  await createOrUpdateZohoTask({
+    ...consultation.toObject(),
+    status: "rescheduled",
+  });
+
+if (
+  task?.taskId &&
+  !consultation.zohoTaskId
+) {
+
+  consultation.zohoTaskId =
+    task.taskId;
+
+  await consultation.save();
+}
 
       } catch (err) {
 

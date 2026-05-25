@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import { BackendURL } from "@/app/lib/config/url";
 import { showToast, toastPromise } from "@/app/lib/toast";
-import TermsModal from "../termsModal.js"; 
+import TermsModal from "../termsModal.js";
 
 export default function LeadsModal({
   isOpen,
@@ -128,7 +128,7 @@ export default function LeadsModal({
     try {
       setIsLoading(true);
 
-      await toastPromise(
+      const response = await toastPromise(
         axios.post(`${BackendURL}/leads/verify`, {
           name: form.name,
           email: form.email,
@@ -171,6 +171,9 @@ export default function LeadsModal({
         email: form.email,
         phone: form.phone,
         gender: gender || "unknown",
+        status:
+          response.data.consultation?.status ||
+          "draft",
       });
     } catch (error) {
     } finally {
@@ -363,9 +366,9 @@ export default function LeadsModal({
                   : "Resend Verification Code"}
               </button>
               {/* text to check otp in spam folder if not showing */}
-        <p className="text-xs text-[#3E1747]/65 text-center mt-2">
-          Didn't receive the code? Check your spam folder.
-        </p>
+              <p className="text-xs text-[#3E1747]/65 text-center mt-2">
+                Didn't receive the code? Check your spam folder.
+              </p>
             </div>
           )}
         </div>
