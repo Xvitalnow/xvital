@@ -25,7 +25,7 @@ import ResultSection from "@/app/components/questionnaire/resultSection.js";
 import ConsultationModal from "@/app/components/questionnaire/consultationModal.js";
 import CancelModal from "@/app/components/questionnaire/cancelModel.js";
 import RescheduleModal from "@/app/components/questionnaire/rescheduleModal.js";
-import LeadsModel from "@/app/components/questionnaire/leadsModel.js";
+import LeadsModal from "@/app/components/questionnaire/leadsModal.js";
 import { useLoader } from "../context/LoaderContext.js";
 import { useXVitalFlow } from "@/app/context/XVitalFlowContext.js";
 import { BackendURL } from "@/app/lib/config/url.js";
@@ -636,7 +636,7 @@ export default function QuestionnaireSection() {
       </section>
 
       {/* Leads */}
-      <LeadsModel
+      <LeadsModal
         isOpen={
           showLeadsModal
         }
@@ -652,6 +652,7 @@ export default function QuestionnaireSection() {
           resultData
         }
         answers={answers}
+        subAnswers={subAnswers}
         extraInputs={
           extraInputs
         }
@@ -772,6 +773,7 @@ export default function QuestionnaireSection() {
 
                           time:
                             consultationForm.time,
+
 
                           razorpay_order_id:
                             response.razorpay_order_id,

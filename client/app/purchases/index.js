@@ -19,14 +19,14 @@ export default function Purchase() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFB] px-6 py-10">
+    <div className="relative pt-[50%] md:pt-32 pb-32 bg-[#FAFAFB] overflow-hidden px-4">
 
       {/* HEADER */}
       <div className="max-w-5xl mx-auto mb-10">
 
         <div className="flex items-center gap-4">
 
-          <div className="w-14 h-14 rounded-2xl bg-[#3E1747]/10 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#3E1747]/10 flex items-center justify-center shrink-0">
             <Icon
               icon="solar:bag-4-bold"
               className="text-[#3E1747]"

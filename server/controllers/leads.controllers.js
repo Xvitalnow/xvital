@@ -370,3 +370,22 @@ export const getAllLeads = async (req, res) => {
     });
   }
 }
+
+// delete all lead from mongodb - for testing purposes only
+export const deleteAllLeads = async (req, res) => {
+  try {
+    await Lead.deleteMany({});
+
+    return res.status(200).json({
+      success: true,
+      message: "All leads deleted",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete leads",
+    });
+  }
+}

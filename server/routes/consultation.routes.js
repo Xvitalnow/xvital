@@ -21,6 +21,6 @@ router.patch("/consultations/reschedule", rescheduleConsultation);
 // router.get("/consultations/all", getAllConsultations);
 
 // delete all consultations -
-router.get("/consultations/delete", deleteAllConsultations);
+// router.get("/consultations/delete", deleteAllConsultations);
 
 export default router;

@@ -37,7 +37,7 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ error: "Invalid package" });
     }
 
-    const order = await createRazorpayOrder(selectedPackage.amount); 
+    const order = await createRazorpayOrder(selectedPackage.amount);
     console.log("Razorpay Order Created:", order);
 
     res.json({ order });
@@ -86,8 +86,8 @@ export const verifyAndSaveOrder = async (req, res) => {
       email: normalizedEmail,
       packageId,
       status: "success",
-      expiryDate: { $gt: new Date() },
-    }).sort({ createdAt: -1 });
+      isActive: true,
+    }).sort({ expiryDate: -1 });
 
     let expiryDate;
 
@@ -103,6 +103,20 @@ export const verifyAndSaveOrder = async (req, res) => {
       );
     }
 
+    // deactivate previous active plans
+    await Order.updateMany(
+      {
+        email: normalizedEmail,
+        packageId,
+        isActive: true,
+      },
+      {
+        $set: {
+          isActive: false,
+        },
+      }
+    );
+
     // 💾 SAVE ORDER (history intact)
     const order = await Order.create({
       name: userData.name || "Unknown",
@@ -115,6 +129,8 @@ export const verifyAndSaveOrder = async (req, res) => {
 
       duration: selectedPackage.duration,
       expiryDate,
+
+      isActive: true,
 
       razorpay_order_id: payment.razorpay_order_id,
       razorpay_payment_id: payment.razorpay_payment_id,
@@ -208,7 +224,7 @@ export const sendOrderOTP = async (req, res) => {
 
     await order.save();
 
-     await sendEmail(
+    await sendEmail(
       "noreply XVITAL <noreply@xvital.in>",
       normalizedEmail,
       "Your XVITAL OTP Code will expire in 5 minutes",
@@ -289,3 +305,15 @@ export const verifyOrderOTPAndGetOrders = async (req, res) => {
     return res.status(500).json({ success: false });
   }
 };
+
+// delete all orders from mongodb - for testing purposes only
+export const deleteAllOrders = async (req, res) => {
+  try {
+    await Order.deleteMany({});
+    res.json({ success: true, message: "All orders deleted" });
+  } catch (err) {
+    console.error("Error deleting orders:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+

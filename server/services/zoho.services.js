@@ -72,32 +72,123 @@ export const createOrUpdateZohoContact = async (data) => {
     const [firstName, ...rest] = data.name.trim().split(" ");
     const lastName = rest.join(" ") || firstName || "Unknown";
 
-    const descriptionJSON = JSON.stringify({
-      type: "consultation",
-      score: data.healthScore,
-      label: data.healthLabel,
+    const formatObject = (obj = {}) => {
+      return Object.entries(obj)
+        .map(([key, value]) => {
+          const formattedKey = key
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
 
-      insights: data.bodyInsights?.split("||") || [],
-      outcomes: data.possibleOutcomes?.split("||") || [],
+          let formattedValue = value;
 
-      reason: data.whyThisHappens,
+          if (Array.isArray(value)) {
+            formattedValue = value.join(", ");
+          }
 
-      body: {
-        weight: data.weight,
-        height: data.height,
-        age: data.age,
-      },
+          if (
+            typeof value === "object" &&
+            value !== null &&
+            !Array.isArray(value)
+          ) {
+            formattedValue = JSON.stringify(
+              value,
+              null,
+              2
+            );
+          }
 
-      schedule: {
-        date: data.date,
-        time: data.time,
-      },
+          return `${formattedKey}: ${formattedValue}`;
+        })
+        .join("\n");
+    };
 
-      // consultation Amount
-      amount: data.amount || 0,
+    const descriptionJSON = `
+========================
+CONSULTATION REPORT
+========================
 
-      foodRestrictions: data.foodRestrictions || "",
-    });
+Health Score: ${data.healthScore}
+Health Label: ${data.healthLabel}
+
+========================
+BODY INSIGHTS
+========================
+
+${data.bodyInsights
+        ?.split("||")
+        ?.map((item, i) => `${i + 1}. ${item}`)
+        ?.join("\n") || "N/A"}
+
+========================
+WHY THIS HAPPENS
+========================
+
+${data.whyThisHappens || "N/A"}
+
+========================
+POSSIBLE OUTCOMES
+========================
+
+${data.possibleOutcomes
+        ?.split("||")
+        ?.map((item, i) => `${i + 1}. ${item}`)
+        ?.join("\n") || "N/A"}
+
+========================
+BODY DETAILS
+========================
+
+Weight: ${data.weight}
+Height: ${data.height}
+Age: ${data.age}
+
+========================
+FOOD RESTRICTIONS
+========================
+
+${Array.isArray(data.foodRestrictions)
+        ? data.foodRestrictions.join(", ")
+        : data.foodRestrictions || "None"
+      }
+
+========================
+BOOKING DETAILS
+========================
+
+Date: ${data.date || "N/A"}
+Time: ${data.time || "N/A"}
+Status: ${data.status || "draft"}
+
+========================
+MAIN QUESTIONNAIRE ANSWERS
+========================
+
+${formatObject(
+        data.questionnaireAnswers
+      )}
+
+========================
+SUB QUESTION ANSWERS
+========================
+
+${formatObject(
+        data.questionnaireSubAnswers
+      )}
+
+========================
+EXTRA INPUTS
+========================
+
+${formatObject(
+        data.questionnaireExtraInputs
+      )}
+
+========================
+PAYMENT
+========================
+
+Amount: ₹${data.amount || 0}
+`;
 
     const payload = {
       First_Name: firstName,
@@ -499,90 +590,197 @@ export const createOrUpdateZohoTask =
 
 
 // ===============================
-// CREATE DEAL (ORDER / PURCHASE)
+// SEARCH DEAL
 // ===============================
-export const createZohoDealOrder = async (data) => {
-  try {
-    // --------------------------------
-    // 1. Find contact by email
-    // --------------------------------
-    const existingContact = await searchZohoContactByEmail(data.email);
+export const searchZohoDeal =
+  async (dealName) => {
 
-    if (!existingContact) {
-      throw new Error("Zoho contact not found for this user");
+    try {
+
+      const res =
+        await zohoRequest({
+          method: "GET",
+
+          url:
+            `${process.env.ZOHO_BASE_URL}/crm/v2/Deals/search`,
+
+          params: {
+            criteria:
+              `(Deal_Name:equals:${dealName})`,
+          },
+        });
+
+      return res.data.data?.[0] || null;
+
+    } catch (error) {
+
+      // no deal found
+      if (
+        error.response?.status === 204
+      ) {
+        return null;
+      }
+
+      // IMPORTANT:
+      // don't stop deal creation
+      console.error(
+        "DEAL SEARCH ERROR:",
+        error.response?.data ||
+        error.message
+      );
+
+      return null;
     }
+  };
 
-    // --------------------------------
-    // 2. Build Deal Name
-    // --------------------------------
-    const dealName = `${data.packageName} - ${data.name}`;
+// ===============================
+// CREATE OR UPDATE DEAL
+// ===============================
+export const createZohoDealOrder =
+  async (data) => {
 
-    // --------------------------------
-    // 3. Compact Description JSON
-    // --------------------------------
-    const descriptionJSON = JSON.stringify(
-      {
-        type: "paid_order",
-        packageId: data.packageId,
-        packageName: data.packageName,
-        duration:
-          data.packageId === "reset"
-            ? "30 Days"
-            : "90 Days",
+    try {
 
-        paymentStatus: data.status,
-        amount: data.amount,
+      // find contact
+      const existingContact =
+        await searchZohoContactByEmail(
+          data.email
+        );
 
-        razorpay_order_id: data.razorpay_order_id,
-        razorpay_payment_id: data.razorpay_payment_id,
+      if (!existingContact) {
 
-        source: "website",
-        createdAt: new Date(),
-      },
-      null,
-      2
-    );
+        throw new Error(
+          "Contact not found"
+        );
+      }
 
-    // --------------------------------
-    // 4. Deal Payload
-    // --------------------------------
-    const payload = {
-      Deal_Name: dealName,
+      // unique deal name
+      const dealName =
+        `${data.packageName} - ${data.email}`;
 
-      Stage: "Paid",
+      // search existing deal
+      const existingDeal =
+        await searchZohoDeal(
+          dealName
+        );
 
-      Amount: data.amount,
+      // description
+      const description =
+        `
+Package:
+${data.packageName}
 
-      Closing_Date: new Date().toISOString().split("T")[0],
+Status:
+${new Date(data.expiryDate)
+          > new Date()
+          ? "Active"
+          : "Expired"
+        }
 
-      Contact_Name: {
-        id: existingContact.id,
-      },
+Expiry Date:
+${new Date(data.expiryDate)
+          .toLocaleDateString()}
 
-      Description: descriptionJSON,
-    };
+Duration:
+${data.duration} Days
 
-    // --------------------------------
-    // 5. Create Deal
-    // --------------------------------
-    const res = await zohoRequest({
-      method: "POST",
-      url: `${process.env.ZOHO_BASE_URL}/crm/v2/Deals`,
-      data: {
-        data: [payload],
-      },
-    });
+Amount:
+₹${data.amount}
 
-    return {
-      dealId: res.data.data?.[0]?.details?.id,
-    };
+Latest Payment ID:
+${data.razorpay_payment_id}
 
-  } catch (error) {
-    console.error(
-      "Zoho Deal Order Error:",
-      error.response?.data || error.message
-    );
+Updated:
+${new Date()
+          .toLocaleString()}
+`;
 
-    throw new Error("Zoho order deal creation failed");
-  }
-};
+      // payload
+      const payload = {
+
+        Deal_Name: dealName,
+
+        Stage: "Paid",
+
+        Amount: data.amount,
+
+        // renamed field label in zoho
+        // api name still Closing_Date
+        Closing_Date:
+          new Date(data.expiryDate)
+            .toISOString()
+            .split("T")[0],
+
+        Contact_Name: {
+          id: existingContact.id,
+        },
+
+        Description:
+          description,
+      };
+
+      // =====================
+      // UPDATE EXISTING DEAL
+      // =====================
+      if (existingDeal) {
+
+        await zohoRequest({
+          method: "PUT",
+
+          url:
+            `${process.env.ZOHO_BASE_URL}/crm/v2/Deals`,
+
+          data: {
+            data: [
+              {
+                id: existingDeal.id,
+                ...payload,
+              },
+            ],
+          },
+        });
+
+        return {
+          dealId:
+            existingDeal.id,
+
+          updated: true,
+        };
+      }
+
+      // =====================
+      // CREATE NEW DEAL
+      // =====================
+      const res =
+        await zohoRequest({
+          method: "POST",
+
+          url:
+            `${process.env.ZOHO_BASE_URL}/crm/v2/Deals`,
+
+          data: {
+            data: [payload],
+          },
+        });
+
+      return {
+        dealId:
+          res.data.data?.[0]
+            ?.details?.id,
+
+        created: true,
+      };
+
+    } catch (error) {
+
+      console.error(
+        "Zoho Deal Error:",
+        error.response?.data ||
+        error.message
+      );
+
+      throw new Error(
+        "Zoho deal failed"
+      );
+    }
+  };

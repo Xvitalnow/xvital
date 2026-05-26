@@ -15,6 +15,7 @@ export default function LeadsModal({
   totalScore = 0,
   resultData = {},
   answers = {},
+  subAnswers = {},
   extraInputs = {},
 }) {
   const [step, setStep] = useState("details");
@@ -158,6 +159,12 @@ export default function LeadsModal({
             answers.allergies ||
             extraInputs.food_restrictions ||
             "",
+
+          questionnaireAnswers: answers,
+
+          questionnaireSubAnswers: subAnswers,
+
+          questionnaireExtraInputs: extraInputs || {},
         }),
         {
           loading: "Verifying OTP...",
