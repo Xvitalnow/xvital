@@ -504,6 +504,8 @@ export default function QuestionnaireSection() {
 
     date: consultationForm.date,
     time: consultationForm.time,
+
+    amount: 999,
   });
 
   if (!gender) return null;

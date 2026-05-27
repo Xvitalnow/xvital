@@ -18,7 +18,7 @@ router.get("/consultations", getConsultationsByEmail);
 router.get("/consultations/slots", getBookedSlots);
 router.patch("/consultations/cancel", cancelConsultation);
 router.patch("/consultations/reschedule", rescheduleConsultation);
-// router.get("/consultations/all", getAllConsultations);
+router.get("/consultations/all", getAllConsultations);
 
 // delete all consultations -
 // router.get("/consultations/delete", deleteAllConsultations);

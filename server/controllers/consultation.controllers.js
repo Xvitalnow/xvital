@@ -82,7 +82,7 @@ export const createConsultationOrder = async (req, res) => {
     const order = await createRazorpayOrder(999);
 
     return res.status(200).json({
-      success: true,
+      success: true, 
       amount: 999,
       order,
     });
