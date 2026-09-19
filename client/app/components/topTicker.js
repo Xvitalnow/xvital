@@ -25,7 +25,7 @@ export default function TopTicker() {
         className="flex whitespace-nowrap text-sm font-medium text-[#3E1747] gap-10"
       >
         {/* Duplicate content for seamless loop */}
-        <span>✨ Not A Deit. A System.</span>
+        <span>✨ Not A Diet. A System.</span>
         <span>✨ Built For Your Body</span>
         <span>✨ Fix The Root Cause First</span>
         <span>✨ Energy Without Crashes</span>
@@ -33,7 +33,7 @@ export default function TopTicker() {
         <span>✨ Clean. Proven. Vital.</span>
 
         {/* Duplicate again */}
-        <span>✨ Not A Deit. A System.</span>
+        <span>✨ Not A Diet. A System.</span>
         <span>✨ Built For Your Body</span>
         <span>✨ Fix The Root Cause First</span>
         <span>✨ Energy Without Crashes</span>
