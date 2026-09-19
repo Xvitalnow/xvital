@@ -17,7 +17,7 @@ const steps = [
     badgeText: "text-white",
     title: "Answer Simple Questions",
     description:
-      "Tell us about your habits, energy levels, and lifestyle no complex forms."
+      "Tell us about your habits, energy levels, and lifestyle—no complex forms."
   },
   {
     icon: "solar:dna-linear",
@@ -38,7 +38,7 @@ const steps = [
     badgeText: "text-[#3E1747]",
     title: "Get Your Structured Plan",
     description:
-      "A practical nutrition system designed for real life no fancy foods or unrealistic rules."
+      "A practical nutrition system designed for real life—no fancy foods or unrealistic rules."
   }
 ];
 
