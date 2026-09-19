@@ -94,7 +94,7 @@ export default function Hero() {
 
           <h1 className="hero-heading text-3xl sm:text-4xl lg:text-7xl tracking-tight font-semibold text-[#111111] leading-[1.1] lg:leading-[1.05] mb-6">
             You’re not lazy. You’re just following the{" "}
-            <span className="text-[#3E1747]">wrong system</span>
+            <span className="text-[#3E1747]">wrong system.</span>
           </h1>
 
           <p className="hero-para text-base sm:text-lg text-[#3E1747]/70 mb-8 lg:mb-10 leading-relaxed font-light">
@@ -144,23 +144,6 @@ export default function Hero() {
             fill
             className="relative object-cover rounded-3xl shadow-xl shadow-[#3E1747]/10 scale-100 transition-transform duration-500 hover:scale-105"
           />
-
-          <div className="absolute -bottom-6 left-4 sm:-left-6 bg-white p-4 rounded-2xl shadow-lg border border-[#AFAFAF]/20 flex items-center space-x-4 backdrop-blur-sm bg-white/90 transition-transform duration-300 hover:translate-y-1">
-
-            <div className="w-12 h-12 rounded-full bg-[#4EDDE2]/20 flex items-center justify-center text-[#4EDDE2]">
-              <Icon icon="solar:graph-up-linear" className="text-2xl" />
-            </div>
-
-            <div>
-              <div className="text-sm text-[#3E1747]/60 font-medium">
-                Energy Levels
-              </div>
-              <div className="text-lg font-semibold text-[#3E1747] tracking-tight">
-                +84% Boost
-              </div>
-            </div>
-
-          </div>
 
         </div>
 
