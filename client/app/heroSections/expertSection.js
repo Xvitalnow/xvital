@@ -123,7 +123,7 @@ export default function ExpertSection() {
               </p>
 
               <p className="text-base text-[#3E1747]/60 font-light leading-relaxed mb-8">
-                "Health is not by chance, it is shaped by daily choices. What you eat influences your energy, focus, and long-term well-being. That is why we focus on creating personalized nutrition strategies, because no two individuals are the same."
+               "Health is not a matter of chance. It is shaped by daily choices. What you eat influences your energy, focus, and long-term well-being. That is why we focus on creating personalized nutrition strategies, because no two individuals are the same."
               </p>
 
               {/* Founder Info */}
