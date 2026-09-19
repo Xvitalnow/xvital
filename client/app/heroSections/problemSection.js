@@ -168,7 +168,7 @@ export default function ProblemSection() {
           </h2> 
 
           <p className="text-[#3E1747]/60 text-base font-light">
-            These are not random problems. They are signs your body is out of alignment not broken.
+            These are not random problems. They are signs your body is out of alignment, not broken.
           </p>
         </div>
 
